@@ -13,17 +13,6 @@ final class CharacterCollectionViewCellVM: Hashable, Equatable {
     private let characterStatus: CharacterStatus
     private let characterImageUrl: URL?
     
-    static func == (lhs: CharacterCollectionViewCellVM, rhs: CharacterCollectionViewCellVM) -> Bool {
-        return lhs.hashValue == rhs.hashValue
-    }
-    
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(characterName)
-        hasher.combine(characterStatus)
-        hasher.combine(characterImageUrl)
-        
-    }
-    
     // MARK: - INIT
     
     init(characterName: String, characterStatus: CharacterStatus, characterImageUrl: URL?) {
@@ -42,17 +31,21 @@ final class CharacterCollectionViewCellVM: Hashable, Equatable {
             completion(.failure(URLError(.badURL)))
             return
         }
-        let request = URLRequest(url: url)
+        ImageLoader.shared.downloadImage(url, completion: completion)
         
-        let task = URLSession.shared.dataTask(with: request) { data, _, error in
-            guard let data = data, error == nil else {
-                completion(.failure(error ?? URLError(.badServerResponse)))
-                return
-            }
-            
-            completion(.success(data))
-        }
-        task.resume()
+    }
+    
+    // MARK: - Hashable
+    
+    static func == (lhs: CharacterCollectionViewCellVM, rhs: CharacterCollectionViewCellVM) -> Bool {
+        return lhs.hashValue == rhs.hashValue
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(characterName)
+        hasher.combine(characterStatus)
+        hasher.combine(characterImageUrl)
+        
     }
     
 }
