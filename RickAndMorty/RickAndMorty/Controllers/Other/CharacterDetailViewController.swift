@@ -10,7 +10,6 @@ import UIKit
 /// Controller to show info about single character
 final class CharacterDetailViewController: UIViewController {
     private let viewModel: CharacterDetailViewVM
-    
     private let detailView: CharacterDetailView
     
     // MARK: - Init
@@ -109,8 +108,22 @@ extension CharacterDetailViewController: UICollectionViewDelegate, UICollectionV
             ) as? CharacterEpisodeCollectionViewCell else {
                 fatalError("Unsupported")
             }
-            cell.configure(with: viewModels[indexPath.row])
+            let viewModel = viewModels[indexPath.row]
+            cell.configure(with: viewModel)
             return cell
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let sectionType = viewModel.sections[indexPath.section]
+        switch sectionType {
+        case .photo, .information:
+            break
+        case .episodes:
+            let episodes = self.viewModel.episodes
+            let selection = episodes[indexPath.row]
+            let vc = EpisodeDetailViewController(url: URL(string: selection))
+            navigationController?.pushViewController(vc, animated: true)
         }
     }
 }
