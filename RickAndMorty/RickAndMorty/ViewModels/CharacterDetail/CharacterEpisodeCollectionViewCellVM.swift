@@ -5,7 +5,7 @@
 //  Created by Anish Agarwal on 5/11/24.
 //
 
-import Foundation
+import UIKit
 
 protocol EpisodeDataRender {
     var name: String { get }
@@ -13,10 +13,12 @@ protocol EpisodeDataRender {
     var episode: String { get }
 }
 
-final class CharacterEpisodeCollectionViewCellVM {
+final class CharacterEpisodeCollectionViewCellVM: Hashable, Equatable {
+    
     private let episodeDataUrl: URL?
     private var isFetching = false
     private var dataBlock: ((EpisodeDataRender) -> Void)?
+    public var borderColor: UIColor
     
     private var episode: RMEpisode? {
         didSet {
@@ -29,8 +31,9 @@ final class CharacterEpisodeCollectionViewCellVM {
     
     // MARK: - Init
     
-    init (episodeDataUrl: URL?) {
+    init (episodeDataUrl: URL?, borderColor: UIColor = .systemMint) {
         self.episodeDataUrl = episodeDataUrl
+        self.borderColor = borderColor
     }
     // MARK: - Public
     
@@ -62,5 +65,13 @@ final class CharacterEpisodeCollectionViewCellVM {
                 print(String(describing: failure))
             }
         }
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(self.episodeDataUrl?.absoluteString ?? "")
+    }
+    
+    static func == (lhs: CharacterEpisodeCollectionViewCellVM, rhs: CharacterEpisodeCollectionViewCellVM) -> Bool {
+        return lhs.hashValue == rhs.hashValue
     }
 }
